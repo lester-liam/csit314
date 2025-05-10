@@ -4,7 +4,7 @@ session_start();
 require_once '../entity/UserAccount.php';
 
 class LoginController {
-    
+
     private $userAccount;
 
     // Constructor Class
@@ -17,13 +17,13 @@ class LoginController {
     public function login($username, $password, $userProfile) {
         return $this->userAccount->login($username, $password, $userProfile);
     }
-    
+
 }
 
 // `login.php` Script
 // Executes when Login Form is Submitted (POST Request)
 if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['userProfile'])) {
-    
+
     // Instantiate New Login Controller & Authenticate User
     $controller = new LoginController();
     $userAccount = $controller->login($_POST['username'], $_POST['password'], $_POST['userProfile']);
@@ -38,19 +38,19 @@ if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['user
         header("Location: ../login.php?error=Invalid Credentials.");
         exit();
 
-    
+
     } elseif (($userAccount->getSuspendStatus()) == 1) {
 
         header("Location: ../login.php?error=User Suspended");
         exit();
 
     } else {
-        
+
         // Update Session Variables
         $_SESSION['id'] = $userAccount->getId();
         $_SESSION['username'] = $userAccount->getUsername();
         $_SESSION['userProfile'] = $userAccount->getUserProfile();
-        
+
         if ($_SESSION['userProfile'] == "User Admin") {
             header("Location: ../viewUserProfile.php");
             exit();

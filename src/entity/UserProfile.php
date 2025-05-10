@@ -2,10 +2,10 @@
 require_once('Database.php');
 
 class UserProfile {
-    private int $id;
-    private string $role; 
-    private string $description;
-    private int $isSuspend; 
+    protected int $id;
+    protected string $role;
+    protected string $description;
+    protected int $isSuspend;
 
     // CRUD Operations //
 
@@ -15,9 +15,9 @@ class UserProfile {
         $role: string
         $description: string
 
-        Returns: Boolean 
+        Returns: Boolean
     */
-        
+
         // New DB Conn
         $db_handle = new Database();
         $db_conn = $db_handle->getConnection();
@@ -28,8 +28,8 @@ class UserProfile {
             $stmt->bindParam(':role', $role);
             $stmt->bindParam(':description', $description);
             $execResult = $stmt->execute();
-            
-            unset($db_handle); // Delete DB Conn
+
+            unset($db_handle); // Disconnect DB Conn
 
             // Insert Success ?
             if ($execResult) {
@@ -43,7 +43,7 @@ class UserProfile {
             return FALSE;
         }
 
-        
+
     }
 
     //  Read UserProfile
@@ -63,9 +63,9 @@ class UserProfile {
             $stmt = $db_conn->prepare("SELECT * FROM `UserProfile` WHERE `id` = :id");
             $stmt->bindParam(':id', $id);
             $execResult = $stmt->execute();
-            
-            unset($db_handle); // Delete DB Conn
-            
+
+            unset($db_handle); // Disconnect DB Conn
+
             // execute() Success?
             if ($execResult) {
                 $userProfile = $stmt->fetchObject('UserProfile');
@@ -78,7 +78,7 @@ class UserProfile {
             unset($db_handle);
             return null;
         }
-        
+
     }
 
     public function readAllUserProfile(): ?array {
@@ -95,7 +95,7 @@ class UserProfile {
         try {
             $stmt = $db_conn->prepare("SELECT * FROM `UserProfile`");
             $execResult = $stmt->execute();
-            unset($db_handle); // Delete DB Conn
+            unset($db_handle); // Disconnect DB Conn
 
             // execute() Success?
             if ($execResult) {
@@ -111,7 +111,7 @@ class UserProfile {
             unset($db_handle);
             return null;
         }
-        
+
     }
 
     public function updateUserProfile(int $id, string $role, string $description): bool {
@@ -133,10 +133,10 @@ class UserProfile {
             $stmt = $db_conn->prepare("UPDATE `UserProfile` SET `role` = :role, `description` = :description WHERE `id` = $id");
             $stmt->bindParam(':role', $role);
             $stmt->bindParam(':description', $description);
-            
+
             $execResult = $stmt->execute();
-    
-            unset($db_handle); // Delete DB Conn
+
+            unset($db_handle); // Disconnect DB Conn
 
             // Insert Success ?
             if ($execResult) {
@@ -150,7 +150,7 @@ class UserProfile {
             return FALSE;
         }
     }
-    
+
     public function suspendUserProfile(int $id): bool {
     /*  Suspends a User Profile:
         $id: int
@@ -163,10 +163,10 @@ class UserProfile {
         // SQL TryCatch Statement
         try {
             $stmt = $db_conn->prepare("UPDATE `UserProfile` SET `isSuspend` = 1 WHERE `id` = $id");
-            
+
             $execResult = $stmt->execute();
-    
-            unset($db_handle); // Delete DB Conn
+
+            unset($db_handle); // Disconnect DB Conn
 
             // Insert Success ?
             if ($execResult) {
@@ -191,14 +191,14 @@ class UserProfile {
         // New DB Conn
         $db_handle = new Database();
         $db_conn = $db_handle->getConnection();
-        
+
         // SQL Statement
         try {
             $searchTerm = "%" . $searchTerm . "%";
             $stmt = $db_conn->prepare("SELECT * FROM `UserProfile` WHERE `role` LIKE :term OR `description` LIKE :term");
             $stmt->bindParam(':term', $searchTerm);
             $execResult = $stmt->execute();
-            unset($db_handle); // Delete DB Conn
+            unset($db_handle); // Disconnect DB Conn
 
             // Search Success ?
             if ($execResult) {

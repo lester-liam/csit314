@@ -35,6 +35,13 @@ if (isset($_GET['q'])) {
     // Decode URL-encoded characters, including %20 for spaces
     $searchTerm = urldecode($searchTermWithoutQuotes);
 
+    // Remove 2 or more consecutive whitespaces
+    $searchTerm = preg_replace('/\s{2,}/', ' ', $searchTerm);
+
+    // Remove trailing whitespaces
+    $searchTerm = ltrim($searchTerm);
+    $searchTerm = rtrim($searchTerm);
+
     // Instantiate the search controller
     $controller = new SearchUserAccountController();
 
@@ -79,7 +86,7 @@ if (isset($_GET['q'])) {
           <ion-icon name="search-outline"></ion-icon>
           <input id="search_term" type="text" placeholder="Search..." value=<?php if (isset($_GET['q'])) { echo $_GET['q']; } ?>>
         </div>
-        <button onclick='window.location.href="viewUserAccount.php?q=\"" + document.getElementById("search_term").value + "\"";' class="search-button">Search</button>
+        <button onclick='searchBtnClicked()' class="search-button">Search</button>
       </div>
       <button onclick='window.location.href="createUserAccount.php"' class="create-button">
         <ion-icon name="add-outline"></ion-icon>
@@ -88,7 +95,7 @@ if (isset($_GET['q'])) {
     </div>
 
     <!-- User Table -->
-    <table class="user-table">
+    <table class="display-table">
       <thead>
         <tr>
           <th>ID</th>
@@ -119,5 +126,17 @@ if (isset($_GET['q'])) {
   </div>
   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  <script>
+    function searchBtnClicked() {
+      var searchTermInput = document.getElementById("search_term");
+      var searchTerm = searchTermInput.value;
+
+      // Alphanumeric & Single Whitespace Regex
+      searchTerm = searchTerm.replace(/[^a-zA-Z0-9\s]+/g, '');
+      searchTerm = searchTerm.replace(/\s+/g, ' ');
+
+      window.location.href = 'viewUserAccount.php?q="' + searchTerm + '"';
+    }
+  </script>
 </body>
 </html>

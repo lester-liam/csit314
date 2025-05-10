@@ -1,54 +1,47 @@
 <?php
-require_once "../entity/ServiceCategory.php";
 
-session_start();
+require_once "/var/www/html/entity/ServiceCategory.php";
 
-class DeleteServiceCategoryController {
-    
+class DeleteServiceCategoryController
+{
     private $serviceCategory;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->serviceCategory = new ServiceCategory();
     }
 
-    // Suspend User Profile, Returns a Boolean Value (Success/Fail)
-    public function deleteServiceCategory($id) {
+    public function deleteServiceCategory(int $id): bool
+    {
         return $this->serviceCategory->deleteServiceCategory($id);
     }
-
 }
 
-// `updateUserAccount.php` Script
-// Executes when Suspend User Profile Button is Click (GET Request)
+/**
+ * Script to handle the Deletion of the Service Category
+ * Expects a GET request with `id` parameter
+ */
 if (isset($_GET['id'])) {
-    
-    // Convert ID to Integer Value
+    // Convert string ID to integer
     $id = (int) $_GET['id'];
-    
-    // Instantiate New Controller & Suspend User
+    // Instantiate New Controller
     $controller = new DeleteServiceCategoryController();
     $status = $controller->deleteServiceCategory($id);
-
-    // Alert Success or Fail, then Redirect
-    if ($status) { 
-
-?>
-    
-        <script> alert ("Delete Successful"); window.location.href="../viewServiceCategory.php"; </script> 
-
-<?php
-
-    } else { ?> 
-        
-        <script> alert ("Delete Failed"); window.location.href="../viewServiceCategory.php"; </script> 
-    
-<?php
-    
+    // Alert Status Message, then Redirect to Page
+    if ($status) {
+        echo '<script>
+                alert ("Delete Successful");
+                window.location.href="../viewServiceCategory.php";
+             </script>';
+    } else {
+        echo '<script>
+                alert ("Delete Failed");
+                window.location.href="../viewServiceCategory.php";
+             </script>';
     }
-    
-    
-} else { ?>
-    
-    <script> alert ("Delete Failed"); window.location.href="../viewServiceCategory.php"; </script> 
-
-<?php } ?>
+} else {
+    echo '<script>
+            alert ("Delete Failed");
+            window.location.href="../viewServiceCategory.php";
+         </script>';
+}

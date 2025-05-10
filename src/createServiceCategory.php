@@ -1,21 +1,24 @@
 <?php
 
-// Start the session (if not already started)
 session_start();
 
-// Ensure User is Logged In
-if (!isset($_SESSION['id']) && !isset($_SESSION['username']) && !isset($_SESSION['userProfile'])) {
+// Check if User is Logged In
+if (
+    !isset($_SESSION['id']) &&
+    !isset($_SESSION['username']) &&
+    !isset($_SESSION['userProfile'])
+) {
     header("Location: login.php");
     exit();
 }
 
-// Ensure User is Platform Management
+// Check if UserProfile is Valid
 if ($_SESSION['userProfile'] != "Platform Management") {
-     header("Location: login.php");
-     exit();
+    header("Location: login.php");
+    exit();
 }
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -35,11 +38,15 @@ if ($_SESSION['userProfile'] != "Platform Management") {
       <a href="#">Report</a>
     </div>
     <div class="navbar-right">
-      <span class="navbar-right-text">Logged in as,<br/>(<?php echo htmlspecialchars($_SESSION["userProfile"]); ?>) <?php echo htmlspecialchars($_SESSION["username"]); ?></span>
+      <span class="navbar-right-text">Logged in as,<br/>
+        (<?php echo htmlspecialchars($_SESSION["userProfile"]); ?>)
+        <?php echo htmlspecialchars($_SESSION["username"]); ?>
+      </span>
       <button class="logout-button" onclick="window.location.href='logout.php'">Logout</button>
     </div>
   </div>
 
+  <!-- Create Form -->
   <div class="form-container">
     <h2>Create Service Category</h2>
     <br>
@@ -53,33 +60,36 @@ if ($_SESSION['userProfile'] != "Platform Management") {
           <strong>Successfully Created Service Category</strong>
         </div>
       <?php } ?>
-
       <div class="form-group">
         <label for="category">Category:</label>
         <input type="text" id="category" name="category" required>
         <span id='categoryValidation' class='text-danger'></span>
       </div>
-
       <div class="form-group">
         <label for="description">Description:</label>
         <input type="text" id="description" name="description">
         <span id='descriptionValidation' class='text-danger'></span>
       </div>
-
       <div class="submit-row">
-        <button type="button" onclick='window.location.href="viewServiceCategory.php"' class="back-button">Back</button>
+        <button type="button"
+                class="back-button"
+                onclick='window.location.href="viewServiceCategory.php"'?>
+          Back
+        </button>
         <button type="submit" id="submit-button" class="submit-button">Create</button>
       </div>
     </form>
   </div>
 
+  <!-- Javascript -->
   <script>
+    // Form Validation
     const form = document.querySelector("form");
-
     document.getElementById("submit-button").addEventListener("click", function (event) {
       event.preventDefault();
       let isValid = true;
 
+      // Category Validation (Trimmed Field must be non-empty)
       const category = document.getElementById("category").value.trim();
       if (!category) {
         document.getElementById("categoryValidation").innerText = "Category cannot be empty.";
@@ -88,13 +98,14 @@ if ($_SESSION['userProfile'] != "Platform Management") {
         document.getElementById("categoryValidation").innerText = "";
       }
 
+      // Description Validation (Trim Field)
       const descriptionInput = document.getElementById("description");
       const description = document.getElementById("description").value.trim();
-      
       if (!description) {
         descriptionInput.value = "";
       }
 
+      // Prompt Confirmation & Submit Form
       if (isValid) {
         if (confirm("Confirm Create Service Category?")) {
           form.submit();

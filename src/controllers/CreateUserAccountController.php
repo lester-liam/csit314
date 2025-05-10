@@ -2,7 +2,7 @@
 require_once "../entity/UserAccount.php";
 
 class CreateUserAccountController {
-    
+
     private $userAccount;
 
     public function __construct() {
@@ -13,7 +13,7 @@ class CreateUserAccountController {
     public function createUserAccount($username, $password, $fullName, $email, $phone, $userProfile) {
         return $this->userAccount->createUserAccount($username, $password, $fullName, $email, $phone, $userProfile);
     }
-    
+
 }
 
 // `createUserAccount.php` Script
@@ -26,7 +26,7 @@ if (
     isset($_POST['phone']) &&
     isset($_POST['userProfile'])
 ) {
-    
+
     // Instantiate New Controller & Create Account
     $controller = new CreateUserAccountController();
     $status = $controller->createUserAccount($_POST['username'], $_POST['password'], $_POST['fullName'], $_POST['email'], $_POST['phone'], $_POST['userProfile']);
@@ -38,7 +38,7 @@ if (
     } else {
         header("Location: ../createUserAccount.php?status=0");
         exit();
-    }       
+    }
 
 }
 

@@ -1,84 +1,89 @@
 <?php
+
 require_once('Database.php');
 
-class ServiceCategory {
+class ServiceCategory
+{
+    protected int $id;              // ID
+    protected string $category;     // Service Category Name
+    protected string $description;  // Description of Service Category
 
-    private int $id;
-    private string $category;
-    private string $description;
-
-    // CRUD Operations //
-
-    //  Create ServiceCategory
-    public function createServiceCategory(string $category, ?string $description): bool {
-    /*  Inserts New User Profile:
-        $category: string
-        $description: string
-
-        Returns: Boolean 
-    */
-        
-        // New DB Conn
+    /**
+     * Inserts a New ServiceCategory Record
+     *
+     * @param string $category      Service Category
+     * @param ?string $description   Description of Service Category (nullable)
+     *
+     * @return bool True if the insertion was successful, false otherwise.
+     */
+    public function createServiceCategory(string $category, ?string $description): bool
+    {
+        // New DB Connection
         $db_handle = new Database();
         $db_conn = $db_handle->getConnection();
 
         // SQL TryCatch Statement
         try {
-
+            // SQL Statement
             $sql = "INSERT INTO `ServiceCategory` (`category`) VALUES (:category)";
-            
-            // Checks if Description is NULL
+
+            // Include 'description' field in SQL query if a description is provided.
             if (!is_null($description)) {
-                $sql = "INSERT INTO `ServiceCategory` (`category`, `description`) VALUES (:category, :description)";
+                $sql = "INSERT INTO `ServiceCategory` (`category`, `description`)
+                        VALUES (:category, :description)";
             }
 
+            // Bind Paramaters
             $stmt = $db_conn->prepare($sql);
             $stmt->bindParam(':category', $category);
 
+            // If a description is provided, bind parameter
             if (!is_null($description)) {
                 $stmt->bindParam(':description', $description);
             }
 
+            // Execute Statement
             $execResult = $stmt->execute();
-            
-            unset($db_handle); // Delete DB Conn
 
-            // Insert Success ?
+            unset($db_handle); // Disconnect DB Conn
+
+            // If execution was sucessful, return true
+            // Otherwise, return false
             if ($execResult) {
-                return TRUE;
+                return true;
             } else {
-                return FALSE;
+                return false;
             }
         } catch (PDOException $e) {
             error_log("Database insert failed: " . $e->getMessage());
             unset($db_handle);
-            return FALSE;
+            return false;
         }
-
-        
     }
 
-    //  Read ServiceCategory
-    public function readServiceCategory(int $id): ?ServiceCategory  {
-    /*  Select Service Category By ID
-        $id: int
-
-        Returns: Single ServiceCategory (nullable)
-    */
-
-        // New DB Conn
+    /**
+     * Reads a specific ServiceCategory record by its ID.
+     *
+     * @param int $id   ID of the ServiceCategory to retrieve.
+     *
+     * @return ?ServiceCategory The ServiceCategory object if found, null otherwise.
+     */
+    public function readServiceCategory(int $id): ?ServiceCategory
+    {
+        // New DB Connection
         $db_handle = new Database();
         $db_conn = $db_handle->getConnection();
 
         // SQL TryCatch Statement
         try {
+            // Bind Parameters and Execute Statement
             $stmt = $db_conn->prepare("SELECT * FROM `ServiceCategory` WHERE `id` = :id");
             $stmt->bindParam(':id', $id);
             $execResult = $stmt->execute();
-            
-            unset($db_handle); // Delete DB Conn
-            
-            // execute() Success?
+            unset($db_handle); // Disconnect DB Conn
+
+            // If execution was sucessful, return ServiceCategory Object
+            // Otherwise, return null
             if ($execResult) {
                 $serviceCategory = $stmt->fetchObject('ServiceCategory');
                 return $serviceCategory;
@@ -90,138 +95,159 @@ class ServiceCategory {
             unset($db_handle);
             return null;
         }
-        
     }
 
-    public function readAllServiceCategory(): ?array {
-    /*  Select All ServiceCategory
-
-        Returns: Array of ServiceCategory (nullable)
-    */
-
-        // New DB Conn
+    /**
+     * Reads all ServiceCategory records from the database.
+     *
+     * @return ?array An array of ServiceCategory objects if successful, null otherwise.
+     */
+    public function readAllServiceCategory(): ?array
+    {
+        // New DB Connnection
         $db_handle = new Database();
         $db_conn = $db_handle->getConnection();
 
         // SQL TryCatch Statement
         try {
+            // Execute Statement
             $stmt = $db_conn->prepare("SELECT * FROM `ServiceCategory`");
             $execResult = $stmt->execute();
-            unset($db_handle); // Delete DB Conn
+            unset($db_handle); // Disconnect DB Conn
 
-            // execute() Success?
+            // If execution was sucessful, return fetchAll ServiceCategory Objects
+            // Otherwise, return null
             if ($execResult) {
-                // Execute was successful, now fetch the data
                 $serviceCategory = $stmt->fetchAll(PDO::FETCH_CLASS, 'ServiceCategory');
                 return $serviceCategory;
             } else {
                 return null;
             }
-
         } catch (PDOException $e) {
             error_log("Database query failed: " . $e->getMessage());
             unset($db_handle);
             return null;
         }
-        
     }
 
-    public function updateServiceCategory(int $id, string $category, ?string $description): bool {
-    /*  Updates a User Profile:
-
-        $id: int
-        $category: string
-        $description: string
-
-        Returns: Boolean
-    */
-
-        // New DB Conn
+    /**
+     * Updates an existing ServiceCategory record.
+     *
+     * @param int $id The ID of the ServiceCategory to update.
+     * @param string $category The new Service Category Name.
+     * @param ?string $description The new Description of the Service Category (nullable).
+     *
+     * @return bool True if the update was successful, false otherwise.
+     */
+    public function updateServiceCategory(
+        int $id,
+        string $category,
+        ?string $description
+    ): bool {
+        // New DB Connnection
         $db_handle = new Database();
         $db_conn = $db_handle->getConnection();
 
         // SQL TryCatch Statement
         try {
+            // SQL Statement
+            $sql = "UPDATE `ServiceCategory`
+                    SET `category` = :category, `description` = :description
+                    WHERE `id` = $id";
 
-            $sql = "UPDATE `ServiceCategory` SET `category` = :category, `description` = :description WHERE `id` = $id";
-            
-            // Checks if Description is NULL
+            // Set default 'description' value in SQL query if no description provided.
             if (is_null($description)) {
                 $description = 'No Description';
             }
 
+            // Bind Parameters
             $stmt = $db_conn->prepare($sql);
             $stmt->bindParam(':category', $category);
             $stmt->bindParam(':description', $description);
-            
+
+            // Execute Statement
             $execResult = $stmt->execute();
-    
-            unset($db_handle); // Delete DB Conn
+            unset($db_handle); // Disconnect DB Conn
 
-            // Insert Success ?
+            // If execution was sucessful, return true
+            // Otherwise, return false
             if ($execResult) {
-                return TRUE;
+                return true;
             } else {
-                return FALSE;
+                return false;
             }
-
         } catch (PDOException $e) {
             error_log("Database update failed: " . $e->getMessage());
             unset($db_handle);
-            return FALSE;
+            return false;
         }
     }
-    
-    public function deleteServiceCategory(int $id): bool {
-    /*  Deletes a Service Category:
-        $id: int
-        Returns: Boolean
-    */
-        // New DB Conn
+
+    /**
+     * Deletes a specific ServiceCategory record by its ID.
+     *
+     * @param int $id The ID of the ServiceCategory to delete.
+     *
+     * @return bool True if the deletion was successful, false otherwise.
+     */
+    public function deleteServiceCategory(int $id): bool
+    {
+        // New DB Connnection
         $db_handle = new Database();
         $db_conn = $db_handle->getConnection();
 
         // SQL TryCatch Statement
         try {
+            // Execute SQL Statement
             $stmt = $db_conn->prepare("DELETE FROM `ServiceCategory` WHERE `id` = $id");
-            
             $execResult = $stmt->execute();
-    
-            unset($db_handle); // Delete DB Conn
 
-            // Insert Success ?
+            unset($db_handle); // Disconnect DB Conn
+
+            // If execution was sucessful, return true
+            // Otherwise, return false
             if ($execResult) {
-                return TRUE;
+                return true;
             } else {
-                return FALSE;
+                return false;
             }
         } catch (PDOException $e) {
             error_log("Database delete failed: " . $e->getMessage());
             unset($db_handle);
-            return FALSE;
+            return false;
         }
     }
 
-    // Search Service Category
-    public function searchServiceCategory(string $searchTerm): ?array {
-    /*  Searches for ServiceCategory:
-        $searchTerm: string
-        Returns: Array of ServiceCategory (nullable)
-    */
-
-        // New DB Conn
+    /**
+     * Searches for ServiceCategory records based on a search term
+     * in the category or description.
+     *
+     * @param string    $searchTerm The term to search for.
+     *
+     * @return ?array   An array of ServiceCategory objects
+     *                  matching the search term (nullable)
+     */
+    public function searchServiceCategory(string $searchTerm): ?array
+    {
+        // New DB Connnection
         $db_handle = new Database();
         $db_conn = $db_handle->getConnection();
-        
+
         // SQL Statement
         try {
+            // Add Wildcard Operators to Search Term
             $searchTerm = "%" . $searchTerm . "%";
+
+            // Bind Parameters
             $stmt = $db_conn->prepare("SELECT * FROM `ServiceCategory` WHERE `category` LIKE :term OR `description` LIKE :term");
             $stmt->bindParam(':term', $searchTerm);
-            $execResult = $stmt->execute();
-            unset($db_handle); // Delete DB Conn
 
-            // Search Success ?
+            // Execute Statement
+            $execResult = $stmt->execute();
+            unset($db_handle); // Disconnect DB Conn
+
+            // If execution was sucessful, return fetchAll ServiceCategory Objects
+            // Otherwise, return null
             if ($execResult) {
                 return $stmt->fetchAll(PDO::FETCH_CLASS, 'ServiceCategory');
             } else {
@@ -234,9 +260,18 @@ class ServiceCategory {
     }
 
     // Accessor Methods
-    public function getId(): int { return $this->id; }
-    public function getCategory(): string { return $this->category; }
-    public function getDescription(): string { return $this->description; }
+    public function getId(): int
+    {
+        return $this->id;
+    }
 
+    public function getCategory(): string
+    {
+        return $this->category;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
 }
-?>

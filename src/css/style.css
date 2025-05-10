@@ -172,7 +172,7 @@ h2 {
 }
 
 .create-button {
-    display: flex; 
+    display: flex;
     align-items: center;
     gap: 12px;
 }
@@ -199,7 +199,7 @@ h2 {
 
 /* Table CSS Style */
 
-.user-table {
+.display-table {
     width: 100%;
     border-collapse: collapse;
     border-radius: 5px;
@@ -208,38 +208,38 @@ h2 {
     box-shadow: 0px 3px 15px rgba(0,0,0,0.2);
 }
 
-.user-table td:last-child {
-    text-align: right; 
-    display: flex; 
-    justify-content: flex-end; 
+.display-table td:last-child {
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
 }
 
-.user-table button {
-    display: flex; 
+.display-table button {
+    display: flex;
     align-items: center;
     gap: 12px;
 }
 
-.user-table button + button {
+.display-table button + button {
     margin-left: 5px;
 }
 
 
-.user-table thead {
+.display-table thead {
     background-color: #ADCDC8;
     font-weight: bold;
     color: #16423C;
 }
 
-.user-table th,
-.user-table td {
+.display-table th,
+.display-table td {
     padding: 12px 16px;
     text-align: left;
     border-bottom: 0.5px solid #4B827B;
     color: #16423C;
 }
 
-.user-table .suspended-yes {
+.display-table .suspended-yes {
     color: #B22222;
     font-weight: bold;
 }
@@ -260,7 +260,7 @@ h2 {
     transition: 0.2s ease;
     text-decoration:none;
 }
-    
+
 .view-button:hover {
     background-color: #ADCDC8;
     color: #16423C
@@ -277,7 +277,7 @@ h2 {
     transition: 0.2s ease;
     text-decoration:none;
 }
-    
+
 .delete-button:hover {
     background-color: #CD5C5C;
     color: #FBFBFB;
@@ -299,9 +299,9 @@ h2 {
 }
 
 .form-container img {
-    display: block; 
-    margin: 0 auto; 
-    margin-bottom: 10px; 
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 10px;
 }
 
 .form-group label {
@@ -310,6 +310,7 @@ h2 {
 }
 
 .form-group input[type="text"],
+.form-group input[type="number"],
 .form-group input[type="password"],
 .form-group input[type="email"],
 .form-group input[type="tel"] {
@@ -324,7 +325,7 @@ h2 {
 .form-group input[readonly] {
     background-color: #6e6d6d;
     color: #FBFBFB;
-    cursor: not-allowed; 
+    cursor: not-allowed;
 }
 
 .form-group {
@@ -337,9 +338,9 @@ h2 {
     border: 1px solid #ADCDC8;
     border-radius: 6px;
     margin-top: 6px;
-    font-size: 1em; 
+    font-size: 1em;
     color: #16423C;
-    appearance: none; 
+    appearance: none;
     background-image: url('data:image/svg+xml;utf8,<svg fill="%2316423C" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
     background-repeat: no-repeat;
     background-position: right 10px top 50%;
@@ -421,6 +422,17 @@ h2 {
     border: none;
     border-radius: 6px;
     cursor: pointer;
+}
+
+.submit-button-disabled {
+    flex: 1;
+    background-color: #6e6d6d;
+    color: #FBFBFB;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: default;
 }
 
 .submit-button:hover {

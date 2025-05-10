@@ -1,34 +1,37 @@
 <?php
 
-// Start the session (if not already started)
 session_start();
 
-// Include the controller
 require_once 'controllers/ViewServiceCategoryController.php';
 
-// Ensure User is Logged In
-if (!isset($_SESSION['id']) && !isset($_SESSION['username']) && !isset($_SESSION['userProfile'])) {
+// Check if User is Logged In
+if (
+    !isset($_SESSION['id']) &&
+    !isset($_SESSION['username']) &&
+    !isset($_SESSION['userProfile'])
+) {
     header("Location: login.php");
     exit();
 }
 
-// Ensure User is Platform Management
+// Check if UserProfile is Valid
 if ($_SESSION['userProfile'] != "Platform Management") {
-     header("Location: login.php");
-     exit();
+    header("Location: login.php");
+    exit();
 }
 
-// Get category by ID
-if (!isset($_GET['id'])) {
-
-  header("Location: viewServiceCategories.php");
-  exit();
-
+// Check if GET['id' Parameter Exists
+if (isset($_GET['id'])) {
+    // Get Service Category
+    $controller = new ViewServiceCategoryController();
+    $serviceCategory = $controller->readServiceCategory($_GET['id']);
 } else {
-  $controller = new ViewServiceCategoryController();
-  $serviceCategory = $controller->readServiceCategory($_GET['id']);
+    // Return to Home Page
+    header("Location: viewServiceCategories.php");
+    exit();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -48,11 +51,15 @@ if (!isset($_GET['id'])) {
       <a href="#">Report</a>
     </div>
     <div class="navbar-right">
-      <span class="navbar-right-text">Logged in as,<br/>(<?php echo htmlspecialchars($_SESSION["userProfile"]); ?>) <?php echo htmlspecialchars($_SESSION["username"]); ?></span>
+      <span class="navbar-right-text">Logged in as,<br/>
+        (<?php echo htmlspecialchars($_SESSION["userProfile"]); ?>)
+        <?php echo htmlspecialchars($_SESSION["username"]); ?>
+      </span>
       <button class="logout-button" onclick="window.location.href='logout.php'">Logout</button>
     </div>
   </div>
 
+  <!-- Update Form -->
   <div class="form-container">
     <h2>Update Service Category</h2>
     <br>
@@ -66,38 +73,49 @@ if (!isset($_GET['id'])) {
           <strong>Service Category Updated Successfully</strong>
         </div>
       <?php } ?>
-
       <div class="form-group">
         <label for="id">ID:</label>
-        <input type="text" id="id" name="id" value="<?php echo htmlspecialchars($serviceCategory->getId()); ?>" readonly>
+        <input type="text"
+               id="id"
+               name="id"
+               value="<?php echo htmlspecialchars($serviceCategory->getId()); ?>" readonly>
       </div>
-
       <div class="form-group">
         <label for="category">Category:</label>
-        <input type="text" id="category" name="category" value="<?php echo htmlspecialchars($serviceCategory->getCategory()); ?>" required>
+        <input type="text"
+               id="category"
+               name="category"
+               value="<?php echo htmlspecialchars($serviceCategory->getCategory()); ?>" required>
         <span id='categoryValidation' class='text-danger'></span>
       </div>
-
       <div class="form-group">
         <label for="description">Description:</label>
-        <input type="text" id="description" name="description" value="<?php echo htmlspecialchars($serviceCategory->getDescription()); ?>">
+        <input type="text"
+               id="description"
+               name="description"
+               value="<?php echo htmlspecialchars($serviceCategory->getDescription()); ?>">
         <span id='descriptionValidation' class='text-danger'></span>
       </div>
-
       <div class="submit-row">
-        <button type="button" onclick='window.location.href="viewServiceCategory.php"' class="back-button">Back</button>
+        <button type="button"
+                class="back-button"
+                onclick='window.location.href="viewServiceCategory.php"'>
+          Back
+        </button>
         <button type="submit" id="submit-button" class="submit-button">Update</button>
       </div>
     </form>
   </div>
 
+  <!-- Javascript -->
   <script>
+    // Form Validation
     const form = document.querySelector("form");
-
     document.getElementById("submit-button").addEventListener("click", function (event) {
       event.preventDefault();
       let isValid = true;
 
+      // Category Validation (Trimmed Field must be non-empty)
       const category = document.getElementById("category").value.trim();
       if (!category) {
         document.getElementById("categoryValidation").innerText = "Category cannot be empty.";
@@ -106,15 +124,16 @@ if (!isset($_GET['id'])) {
         document.getElementById("categoryValidation").innerText = "";
       }
 
+      // Description Validation (Trim Field)
       const descriptionInput = document.getElementById("description");
       const description = document.getElementById("description").value.trim();
-      
       if (!description) {
         descriptionInput.value = "";
       }
 
+      // Prompt Confirmation & Submit Form
       if (isValid) {
-        if (confirm("Confirm update of Service Category?")) {
+        if (confirm("Confirm Create Service Category?")) {
           form.submit();
         }
       }
